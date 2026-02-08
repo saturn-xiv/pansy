@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/saturn-xiv/palm/pansy/proxy"
+	"github.com/saturn-xiv/pansy/proxy"
 )
 
 type Ssh struct {

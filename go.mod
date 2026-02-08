@@ -1,4 +1,4 @@
-module github.com/saturn-xiv/palm/pansy
+module github.com/saturn-xiv/pansy
 
 go 1.25.7
 

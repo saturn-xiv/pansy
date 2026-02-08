@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/saturn-xiv/palm/pansy/env"
+	"github.com/saturn-xiv/pansy/env"
 )
 
 var (
