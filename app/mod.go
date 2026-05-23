@@ -29,7 +29,7 @@ var (
 		Example: `  1: Generating a new key:
   ssh-keygen -t ed25519 -C 'your_email@example.com' -f .ssh
   2: Start the proxy server:
-  pansy -d -H <remote-host> -P <remote-port> -U <remote-user> -K $PWD/.ssh/id_ed25519 -p <local-port>
+  pansy -d -H <remote-host> -P <remote-port> -U <remote-user> -K $PWD/.ssh -p <local-port>
 `,
 		Version: env.Version(),
 		Run: func(cmd *cobra.Command, args []string) {
