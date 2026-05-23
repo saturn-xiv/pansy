@@ -33,6 +33,7 @@ build_go linux amd64
 build_go linux arm64
 build_go linux riscv64
 build_go darwin arm64
+build_go windows amd64
 
 echo "done."
 exit 0
