@@ -24,8 +24,13 @@ var (
 	gl_ssh_key_file string
 
 	gl_root_cmd = &cobra.Command{
-		Use:     "pansy",
-		Short:   "launch a HTTP proxy server over SSH",
+		Use:   "pansy",
+		Short: "launch a HTTP proxy server over SSH.",
+		Example: `  1: Generating a new key:
+  ssh-keygen -t ed25519 -C 'your_email@example.com' -f .ssh
+  2: Start the proxy server:
+  pansy -d -H <remote-host> -P <remote-port> -U <remote-user> -K $PWD/.ssh/id_ed25519 -p <local-port>
+`,
 		Version: env.Version(),
 		Run: func(cmd *cobra.Command, args []string) {
 			ssh := Ssh{
