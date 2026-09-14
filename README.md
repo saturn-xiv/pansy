@@ -3,7 +3,8 @@
 ## Building
 
   ```bash
-  git clone https://github.com/saturn-xiv/pansy.git
+  git clone https://github.com/saturn-xiv/pansy.git $HOME/workspace/pansy
+  cd $HOME/workspace/pansy/
   git submodule update --init --recursive
   
   ./build.sh
@@ -17,3 +18,7 @@
   # Run on debug mode
   pandy -d -c config.toml -H xxx.xxx.xxx.xxx -P 22 -U proxy 
   ```
+
+## Documents
+
+- [MacOS Cross-Toolchain for Linux and *BSD](https://github.com/tpoechtrager/osxcross)

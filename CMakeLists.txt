@@ -20,8 +20,12 @@ string(TIMESTAMP BUILD_TIME UTC)
 configure_file(include/pansy/version.h.in ${PROJECT_SOURCE_DIR}/include/pansy/version.hpp)
 # --------------------------------------------------------
 find_package(argparse CONFIG REQUIRED)
+find_package(tomlplusplus CONFIG REQUIRED)
+find_package(libssh2 CONFIG REQUIRED)
 find_package(unofficial-sodium CONFIG REQUIRED)
-find_package(boost_exception CONFIG REQUIRED)
+find_package(Boost REQUIRED COMPONENTS asio)
+find_package(Boost REQUIRED COMPONENTS log)
+find_package(Boost REQUIRED COMPONENTS exception)
 # --------------------------------------------------------
 file(GLOB SOURCE_LIST CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
@@ -30,9 +34,8 @@ set_target_properties(pansy PROPERTIES LINK_FLAGS_RELEASE -s)
 target_link_options(pansy PRIVATE -static-libgcc -static-libstdc++)
 
 target_link_libraries(pansy
-  Boost::exception
-  argparse::argparse
-  unofficial-sodium::sodium
+  Boost::asio Boost::log Boost::exception
+  argparse::argparse tomlplusplus::tomlplusplus libssh2::libssh2 unofficial-sodium::sodium
 )
 
 target_include_directories(pansy PUBLIC

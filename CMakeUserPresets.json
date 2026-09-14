@@ -2,7 +2,7 @@
   "version": 2,
   "configurePresets": [
     {
-      "name": "x86_64",
+      "name": "x86_64-linux",
       "inherits": "vcpkg",
       "environment": {
         "VCPKG_ROOT": "${sourceDir}/vcpkg",
@@ -10,11 +10,11 @@
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-linux-release",
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/gcc/x86_64.cmake"
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/x86_64-linux.cmake"
       }
     },
     {
-      "name": "aarch64",
+      "name": "aarch64-linux",
       "inherits": "vcpkg",
       "environment": {
         "VCPKG_ROOT": "${sourceDir}/vcpkg",
@@ -22,11 +22,11 @@
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "arm64-linux-release",
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/gcc/aarch64.cmake"
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/aarch64-linux.cmake"
       }
     },
     {
-      "name": "riscv64",
+      "name": "riscv64-linux",
       "inherits": "vcpkg",
       "environment": {
         "VCPKG_ROOT": "${sourceDir}/vcpkg",
@@ -34,7 +34,31 @@
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "riscv64-linux-release",
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/gcc/riscv64.cmake"
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/riscv64-linux.cmake"
+      }
+    },
+    {
+      "name": "x86_64-windows",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "${sourceDir}/vcpkg",
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static-release",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/x86_64-windows.cmake"
+      }
+    },
+    {
+      "name": "arm64-darwin",
+      "inherits": "vcpkg",
+      "environment": {
+        "VCPKG_ROOT": "${sourceDir}/vcpkg",
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static-release",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/arm64-darwin.cmake"
       }
     }
   ]
