@@ -15,8 +15,8 @@
   ```bash
   # Generate a sample config
   pansy create-new-user -n "Who am i" -p "change-me"
-  # Run on debug mode
-  pandy -d -c config.toml -H xxx.xxx.xxx.xxx -P 22 -U proxy 
+  # Run a proxy server on debug mode
+  pandy -d start-proxy-server -c config.toml -p 8000 -H host -P "change-me"
   ```
 
 ## Documents
