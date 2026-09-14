@@ -2,6 +2,8 @@
   "dependencies": [
     "libssh2",
     "boost-asio",
+    "boost-beast",
+    "boost-serialization",
     "boost-log",
     "boost-exception",
     "libsodium",

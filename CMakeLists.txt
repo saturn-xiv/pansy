@@ -24,8 +24,11 @@ find_package(tomlplusplus CONFIG REQUIRED)
 find_package(libssh2 CONFIG REQUIRED)
 find_package(unofficial-sodium CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS asio)
+find_package(Boost REQUIRED COMPONENTS beast)
+find_package(Boost REQUIRED COMPONENTS serialization)
 find_package(Boost REQUIRED COMPONENTS log)
 find_package(Boost REQUIRED COMPONENTS exception)
+
 # --------------------------------------------------------
 file(GLOB SOURCE_LIST CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
@@ -34,10 +37,11 @@ set_target_properties(pansy PROPERTIES LINK_FLAGS_RELEASE -s)
 target_link_options(pansy PRIVATE -static-libgcc -static-libstdc++)
 
 target_link_libraries(pansy
-  Boost::asio Boost::log Boost::exception
+  Boost::asio Boost::beast Boost::serialization Boost::log Boost::exception
   argparse::argparse tomlplusplus::tomlplusplus libssh2::libssh2 unofficial-sodium::sodium
 )
 
 target_include_directories(pansy PUBLIC
   ${PROJECT_SOURCE_DIR}/include
+  ${Z85_INCLUDE_DIRS}
 )

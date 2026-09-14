@@ -1,8 +1,7 @@
 #pragma once
 
-#include "pansy/windows.hpp"
-
 #include <cstdint>
+#include <string>
 
 namespace pansy {
 class Application {
@@ -11,7 +10,8 @@ class Application {
   int launch(int argc, char* argv[]);
 
  private:
-  void create_new_user(const std::string& config_file, const std::string& email,
+  void create_new_user(const std::string& config_file,
+                       const std::string& username,
                        const std::string& password);
   void start_proxy_server(const std::string& config_file,
                           const std::string& remote_host,

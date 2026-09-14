@@ -1,5 +1,7 @@
 #include "pansy/application.hpp"
+#include "pansy/proxy.hpp"
 #include "pansy/version.hpp"
+#include "pansy/windows.hpp"
 
 #include <cstdlib>
 
@@ -86,7 +88,6 @@ int pansy::Application::launch(int argc, char* argv[]) {
         create_user_command.get<std::string>("--password");
 
     this->create_new_user(config_file, name, password);
-    BOOST_LOG_TRIVIAL(info) << "done.";
     return EXIT_SUCCESS;
 
   } else if (program.is_subcommand_used(proxy_server_command)) {
@@ -95,7 +96,7 @@ int pansy::Application::launch(int argc, char* argv[]) {
         proxy_server_command.get<std::string>("--host");
     const std::string local_ip = proxy_server_command.get<std::string>("--ip");
     const std::string password =
-        create_user_command.get<std::string>("--password");
+        proxy_server_command.get<std::string>("--password");
 
     this->start_proxy_server(config_file, remote_host, local_ip, local_port,
                              password);
@@ -113,10 +114,18 @@ int pansy::Application::launch(int argc, char* argv[]) {
 }
 
 void pansy::Application::create_new_user(const std::string& config_file,
-                                         const std::string& name,
+                                         const std::string& username,
                                          const std::string& password) {
-  BOOST_LOG_TRIVIAL(info) << "create " << config_file << ".toml for " << name;
-  // TODO
+  if (std::filesystem::exists(config_file)) {
+    BOOST_LOG_TRIVIAL(error) << "file " << config_file << " already exists.";
+    return;
+  }
+  BOOST_LOG_TRIVIAL(warning)
+      << "create " << config_file << ".toml for " << username;
+  pansy::proxy::Config config;
+  config.sample(username, password);
+  config.save(config_file);
+  BOOST_LOG_TRIVIAL(info) << "done.";
 }
 
 void pansy::Application::start_proxy_server(const std::string& config_file,
@@ -124,8 +133,6 @@ void pansy::Application::start_proxy_server(const std::string& config_file,
                                             const std::string& local_ip,
                                             uint16_t local_port,
                                             const std::string& password) {
-  // TODO
-
-  BOOST_LOG_TRIVIAL(info) << "listen on http://" << local_ip << ":"
-                          << local_port;
+  pansy::proxy::Server server(config_file);
+  server.start(remote_host, local_ip, local_port, password);
 }
