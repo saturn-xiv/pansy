@@ -1,5 +1,4 @@
-#include <catch2/catch_test_macros.hpp>
+#define BOOST_TEST_MODULE test secrets
+#include <boost/test/included/unit_test.hpp>
 
-TEST_CASE("encrypt object by aes", "[aes-base64]") {
-    REQUIRE(1 == 1*1);
-}
+BOOST_AUTO_TEST_CASE(base64_aes) { BOOST_TEST(true); }

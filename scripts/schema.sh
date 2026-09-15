@@ -2,6 +2,6 @@
 
 set -e
 
-clang-format -i src/*.cpp include/pansy/*.hpp
+clang-format -i src/*.cpp begonia/src/*.cpp begonia/include/pansy/*.hpp tests/*.cpp
 
 echo 'done.'

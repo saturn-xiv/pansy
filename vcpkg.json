@@ -1,16 +1,15 @@
 {
   "dependencies": [
+    "libssh2",
+    "libsodium",
+    "argparse",
+    "tomlplusplus",
     "boost-asio",
     "boost-beast",
     "boost-iostreams",
     "boost-serialization",
     "boost-log",
     "boost-exception",
-    "libssh2",
-    "libsodium",
-    "cppcodec",
-    "argparse",
-    "tomlplusplus",
-    "catch2"
+    "boost-test"
   ]
 }

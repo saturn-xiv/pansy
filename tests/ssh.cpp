@@ -1,5 +1,4 @@
-#include <catch2/catch_test_macros.hpp>
+#define BOOST_TEST_MODULE test secrets
+#include <boost/test/included/unit_test.hpp>
 
-TEST_CASE("ssh client", "[ssh-client]") {
-    REQUIRE(1 == 1*1);
-}
+BOOST_AUTO_TEST_CASE(ssh_client) { BOOST_TEST(true); }

@@ -14,7 +14,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_subdirectory(begonia)
 add_subdirectory(tests)
 # --------------------------------------------------------
-add_executable(pansy ${PROJECT_SOURCE_DIR}/srv/main.cpp)
+add_executable(pansy ${PROJECT_SOURCE_DIR}/src/main.cpp)
 set_target_properties(pansy PROPERTIES LINK_FLAGS_RELEASE -s)
 target_link_options(pansy PRIVATE -static-libgcc -static-libstdc++ -Wl,--build-id=sha1)
 target_link_libraries(pansy begonia)
