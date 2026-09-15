@@ -10,6 +10,8 @@ int main(int argc, char* argv[]) {
 
   try {
     return app.launch(argc, argv);
+  } catch (const std::exception& e) {
+    BOOST_LOG_TRIVIAL(error) << e.what();
   } catch (...) {
     BOOST_LOG_TRIVIAL(error)
         << boost::current_exception_diagnostic_information();

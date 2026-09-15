@@ -139,8 +139,8 @@ void pansy::Application::start_proxy_server(const std::string& config_file,
                                             const std::string& password) {
   pansy::proxy::Config config(config_file);
   BOOST_LOG_TRIVIAL(info) << "listen " << remote_host << " for "
-                          << config._username << " on http://" << local_ip << ":"
-                          << local_port;
+                          << config._username << " on http://" << local_ip
+                          << ":" << local_port;
   if (!config._nodes.contains(remote_host)) {
     throw std::invalid_argument("couldn't found host " + remote_host);
   }

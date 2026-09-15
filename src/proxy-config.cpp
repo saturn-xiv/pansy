@@ -37,6 +37,73 @@ void pansy::proxy::Config::sample(const std::string& username,
     {
       Key key;
       key.load(username);
+
+      {
+        // std::vector<uint8_t> plain(481);
+        // randombytes_buf(plain.data(), plain.size());
+        const auto plain = pansy::serialize(key);
+
+        BOOST_LOG_TRIVIAL(debug)
+            << "plain message: " << pansy::base64::encode(plain);
+        BOOST_LOG_TRIVIAL(debug) << "plain length: " << plain.size();
+        const auto cipher = secrets.encrypt(password, plain);
+        BOOST_LOG_TRIVIAL(debug) << "cipher length: " << cipher.size();
+
+        {
+          const auto cipher2 = secrets.encrypt(password, plain);
+          BOOST_LOG_TRIVIAL(debug) << "cipher-2 length: " << cipher.size()
+                                   << " " << (cipher == cipher2);
+        }
+
+        const auto encoded = pansy::base64::encode(cipher);
+        BOOST_LOG_TRIVIAL(debug)
+            << "base64 encoded cipher message(" << cipher.size() << ","
+            << encoded.size() << "): " << encoded;
+        {
+          const auto cipher3 = secrets.encrypt(password, plain);
+          BOOST_LOG_TRIVIAL(debug) << "cipher-3 length: " << cipher.size()
+                                   << " " << (cipher == cipher3);
+        }
+        {
+          const auto cipher4 = pansy::base64::decode(encoded);
+          BOOST_LOG_TRIVIAL(debug) << "cipher-4 length: " << cipher.size()
+                                   << " " << (cipher == cipher4);
+
+          const auto tmp = secrets.decrypt(password, cipher4);
+          BOOST_LOG_TRIVIAL(debug) << "decrypted message(" << (tmp == plain)
+                                   << "): " << pansy::base64::encode(tmp);
+        }
+
+        {
+          const auto decoded = pansy::base64::decode(encoded);
+          BOOST_LOG_TRIVIAL(debug)
+              << "base64 decoded cipher message length " << decoded.size();
+          const auto tmp = secrets.decrypt(password, decoded);
+          BOOST_LOG_TRIVIAL(debug) << "message(" << (tmp == plain)
+                                   << "): " << pansy::base64::encode(tmp);
+        }
+      }
+
+      /*{
+        // const auto buf = pansy::serialize(key);
+        std::vector<uint8_t> buf(481);
+        randombytes_buf(buf.data(), buf.size());
+
+        const auto cipher = secrets.encrypt(password, buf);
+        const auto encoded = pansy::base64::encode(cipher);
+        BOOST_LOG_TRIVIAL(debug)
+            << "key(plain " << buf.size() << ", cipher " << cipher.size()
+            << ", base64 " << encoded.length() << "): " << encoded;
+        const auto decoded = pansy::base64::decode(encoded);
+        BOOST_LOG_TRIVIAL(debug)
+            << "(decoded cipher " << decoded.size() << "): " << (decoded ==
+      cipher)
+            << " " << pansy::base64::encode(decoded);
+        const auto plain = secrets.decrypt(password, decoded);
+        BOOST_LOG_TRIVIAL(debug)
+            << "(cipher " << decoded.size() << ", plain" << plain.size() << ")";
+      }*/
+
       {
         const auto buf = pansy::serialize(key);
         this->_key = pansy::base64::encode(secrets.encrypt(password, buf));

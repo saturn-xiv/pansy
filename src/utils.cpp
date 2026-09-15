@@ -46,21 +46,23 @@ std::string pansy::hostname() {
 #endif
 
 std::string pansy::base64::encode(const std::vector<uint8_t>& buf) {
+  const size_t len = buf.size();
   std::string it;
 
-  it.resize(boost::beast::detail::base64::encoded_size(buf.size()));
+  it.resize(boost::beast::detail::base64::encoded_size(len));
   const auto written =
-      boost::beast::detail::base64::encode(it.data(), buf.data(), buf.size());
+      boost::beast::detail::base64::encode(it.data(), buf.data(), len);
   it.resize(written);
 
   return it;
 }
 std::vector<uint8_t> pansy::base64::decode(const std::string& str) {
+  const size_t len = str.size();
   std::vector<uint8_t> buf;
 
-  buf.resize(boost::beast::detail::base64::decoded_size(str.size()));
+  buf.resize(boost::beast::detail::base64::decoded_size(len));
   const auto result =
-      boost::beast::detail::base64::decode(buf.data(), str.data(), str.size());
+      boost::beast::detail::base64::decode(buf.data(), str.data(), len);
   buf.resize(result.first);
 
   return buf;

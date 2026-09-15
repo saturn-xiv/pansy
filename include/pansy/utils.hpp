@@ -45,22 +45,24 @@ std::vector<uint8_t> serialize(const T& object) {
 
 template <typename T>
 std::unique_ptr<T> deserialize(const std::vector<uint8_t>& buffer) {
-  boost::iostreams::filtering_istream dp;
-  dp.push(boost::iostreams::bzip2_decompressor());
-
-  std::string cs(reinterpret_cast<const char*>(buffer.data()), buffer.size());
-  std::stringstream css(cs, std::ios::in | std::ios::binary);
-  dp.push(css);
-
-  std::stringstream dss(std::ios::in | std::ios::out | std::ios::binary);
-  boost::iostreams::copy(dp, dss);
-  std::string ds = dss.str();
-
   std::unique_ptr<T> it = std::make_unique<T>();
 
-  std::istringstream input(ds, std::ios::binary);
-  boost::archive::binary_iarchive ia(input);
-  ia >> *it;
+  {
+    boost::iostreams::filtering_istream dp;
+    dp.push(boost::iostreams::bzip2_decompressor());
+
+    std::string cs(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+    std::stringstream css(cs, std::ios::in | std::ios::binary);
+    dp.push(css);
+
+    std::stringstream dss(std::ios::in | std::ios::out | std::ios::binary);
+    boost::iostreams::copy(dp, dss);
+    std::string ds = dss.str();
+
+    std::istringstream input(ds, std::ios::binary);
+    boost::archive::binary_iarchive ia(input);
+    ia >> *it;
+  }
 
   return std::move(it);
 }
