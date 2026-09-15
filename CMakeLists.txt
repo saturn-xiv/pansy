@@ -26,6 +26,7 @@ find_package(unofficial-sodium CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS asio)
 find_package(Boost REQUIRED COMPONENTS beast)
 find_package(Boost REQUIRED COMPONENTS serialization)
+find_package(Boost REQUIRED COMPONENTS iostreams)
 find_package(Boost REQUIRED COMPONENTS log)
 find_package(Boost REQUIRED COMPONENTS exception)
 
@@ -37,7 +38,7 @@ set_target_properties(pansy PROPERTIES LINK_FLAGS_RELEASE -s)
 target_link_options(pansy PRIVATE -static-libgcc -static-libstdc++)
 
 target_link_libraries(pansy
-  Boost::asio Boost::beast Boost::serialization Boost::log Boost::exception
+  Boost::asio Boost::beast Boost::serialization Boost::iostreams Boost::log Boost::exception
   argparse::argparse tomlplusplus::tomlplusplus libssh2::libssh2 unofficial-sodium::sodium
 )
 

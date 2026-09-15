@@ -1,63 +1,54 @@
 #include "pansy/proxy.hpp"
+#include "pansy/utils.hpp"
 
 #include <fstream>
+#include <stdexcept>
 
-#include <boost/beast/core/detail/base64.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/stream.hpp>
 #include <boost/log/trivial.hpp>
 
-#include <sodium.h>
 #include <toml++/toml.hpp>
-
-void pansy::proxy::Token::build(const std::string& password) {
-  {
-    const size_t len = 32;
-    BOOST_LOG_TRIVIAL(debug) << "generate a " << len << "-bytes salt";
-    this->_salt.resize(len);
-    randombytes_buf(this->_salt.data(), len);
-  }
-  {
-    BOOST_LOG_TRIVIAL(debug) << "generate a new ssh(ed25519) key";
-    BOOST_LOG_TRIVIAL(debug) << "public key: " << "public key";
-    this->_key.resize(125);
-  }
-}
-void pansy::proxy::Token::parse(const std::string& secret) {
-  std::string raw;
-  {
-    raw.resize(boost::beast::detail::base64::decoded_size(secret.size()));
-    auto result = boost::beast::detail::base64::decode(
-        raw.data(), secret.data(), secret.size());
-    raw.resize(result.first);
-  }
-
-  std::stringstream ss(raw);
-  boost::archive::binary_iarchive ia(ss);
-  ia >> *this;
-}
-
-std::string pansy::proxy::Token::to_string() const {
-  std::stringstream ss;
-  boost::archive::binary_oarchive oa(ss);
-  oa << *this;
-
-  const std::string raw = ss.str();
-  std::string buf;
-  {
-    buf.resize(boost::beast::detail::base64::encoded_size(raw.size()));
-    auto len = boost::beast::detail::base64::encode(buf.data(), raw.data(),
-                                                    raw.size());
-    buf.resize(len);
-  }
-
-  return buf;
-}
 
 void pansy::proxy::Config::sample(const std::string& username,
                                   const std::string& password) {
   {
-    Token token;
-    token.build(password);
-    this->_token = token.to_string();
+    Secrets secrets;
+    secrets.generate();
+
+    {
+      std::vector<char> buf;
+      {
+        boost::iostreams::stream<
+            boost::iostreams::back_insert_device<std::vector<char>>>
+            os(boost::iostreams::back_inserter(buf));
+
+        boost::archive::binary_oarchive oa(os);
+        oa << secrets;
+      }
+      this->_secrets =
+          pansy::base64::encode(std::vector<uint8_t>(buf.begin(), buf.end()));
+    }
+
+    {
+      Key key;
+      key.load(username);
+
+      {
+        std::vector<char> buf;
+        {
+          boost::iostreams::stream<
+              boost::iostreams::back_insert_device<std::vector<char>>>
+              os(boost::iostreams::back_inserter(buf));
+
+          boost::archive::binary_oarchive oa(os);
+          oa << key;
+        }
+
+        this->_key = pansy::base64::encode(secrets.encrypt(
+            password, std::vector<uint8_t>(buf.begin(), buf.end())));
+      }
+    }
   }
 
   this->_username = username;
@@ -66,10 +57,12 @@ void pansy::proxy::Config::sample(const std::string& username,
 }
 
 pansy::proxy::Config::Config(const std::filesystem::path& config_file) {
-  BOOST_LOG_TRIVIAL(debug) << "load configuration from" << config_file.string();
+  BOOST_LOG_TRIVIAL(debug) << "load configuration from "
+                           << config_file.string();
   const toml::table root = toml::parse_file(config_file.string());
   this->_username = root["username"].value<std::string>().value();
-  this->_token = root["token"].value<std::string>().value();
+  this->_secrets = root["secrets"].value<std::string>().value();
+  this->_key = root["key"].value<std::string>().value();
 
   const auto nodes = root["nodes"].as_table();
   if (nodes != nullptr) {
@@ -99,13 +92,15 @@ void pansy::proxy::Config::save(
     nodes.insert_or_assign(name, it);
   }
 
-  auto root = toml::table{
-      {"username", this->_username}, {"token", this->_token}, {"nodes", nodes}};
+  auto root = toml::table{{"username", this->_username},
+                          {"key", this->_key},
+                          {"secrets", this->_secrets},
+                          {"nodes", nodes}};
 
   std::ofstream file(config_file);
   if (!file.is_open()) {
-    BOOST_LOG_TRIVIAL(error) << "failed to open file for writing";
-    return;
+    throw std::invalid_argument("failed to open file" + config_file.string() +
+                                " for writing");
   }
 
   file << root;

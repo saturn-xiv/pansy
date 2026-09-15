@@ -3,6 +3,7 @@
     "libssh2",
     "boost-asio",
     "boost-beast",
+    "boost-iostreams",
     "boost-serialization",
     "boost-log",
     "boost-exception",
