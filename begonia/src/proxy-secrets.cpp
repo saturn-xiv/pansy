@@ -13,24 +13,27 @@ std::vector<uint8_t> pansy::proxy::Secrets::key(
   const size_t len = std::min(static_cast<size_t>(16), password.length());
   std::copy_n(password.begin(), len, std::back_inserter(buf));
   std::copy_n(this->_salt.begin(),
-              static_cast<size_t>(crypto_secretbox_NONCEBYTES - len),
+              static_cast<size_t>(crypto_secretbox_KEYBYTES - len),
               std::back_inserter(buf));
-
+  BOOST_LOG_TRIVIAL(debug) << "using " << buf.size()
+                           << "-bytes aes key: " << pansy::base64::encode(buf);
   return buf;
 }
 
 void pansy::proxy::Secrets::generate() {
   {
-    BOOST_LOG_TRIVIAL(debug)
-        << "generate a " << crypto_secretbox_KEYBYTES << "-bytes salt";
     this->_salt.resize(crypto_secretbox_KEYBYTES);
     crypto_secretbox_keygen(this->_salt.data());
+    BOOST_LOG_TRIVIAL(debug)
+        << "generate a " << this->_salt.size()
+        << "-bytes salt: " << pansy::base64::encode(this->_salt);
   }
   {
-    BOOST_LOG_TRIVIAL(debug)
-        << "generate a " << crypto_secretbox_NONCEBYTES << "-bytes nonce";
     this->_nonce.resize(crypto_secretbox_NONCEBYTES);
     randombytes_buf(this->_nonce.data(), crypto_secretbox_NONCEBYTES);
+    BOOST_LOG_TRIVIAL(debug)
+        << "generate a " << this->_nonce.size()
+        << "-bytes nonce: " << pansy::base64::encode(this->_nonce);
   }
 }
 

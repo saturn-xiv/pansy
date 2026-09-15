@@ -58,5 +58,16 @@ BOOST_AUTO_TEST_CASE(aes) {
 
     const auto plain = pansy::serialize(key);
     __test_aes(secrets, password, plain);
+
+    {
+      const auto cipher = secrets.encrypt(password, plain);
+      const auto cipher_s = pansy::base64::encode(cipher);
+      const auto buf = pansy::base64::decode(cipher_s);
+      BOOST_REQUIRE_EQUAL_COLLECTIONS(buf.begin(), buf.end(), cipher.begin(),
+                                      cipher.end());
+      const auto tmp = secrets.decrypt(password, buf);
+      BOOST_REQUIRE_EQUAL_COLLECTIONS(tmp.begin(), tmp.end(), plain.begin(),
+                                      plain.end());
+    }
   }
 }

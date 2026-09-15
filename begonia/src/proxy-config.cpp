@@ -11,12 +11,10 @@
 #include <toml++/toml.hpp>
 
 std::unique_ptr<pansy::proxy::Secrets> pansy::proxy::Config::secrets() const {
-  const auto buf = pansy::base64::decode(this->_secrets);
-  return pansy::deserialize<Secrets>(buf);
+  return pansy::deserialize<Secrets>(pansy::base64::decode(this->_secrets));
 }
 std::unique_ptr<pansy::proxy::Key> pansy::proxy::Config::key(
     const std::string& password) const {
-  // BOOST_LOG_TRIVIAL(debug) << "using password: " << password;
   const auto ciper = pansy::base64::decode(this->_key);
   const auto secrets = this->secrets();
   const auto buf = secrets->decrypt(password, ciper);
@@ -25,23 +23,15 @@ std::unique_ptr<pansy::proxy::Key> pansy::proxy::Config::key(
 
 void pansy::proxy::Config::sample(const std::string& username,
                                   const std::string& password) {
-  // BOOST_LOG_TRIVIAL(debug) << "using password: " << password;
   {
     Secrets secrets;
     secrets.generate();
-    {
-      const auto buf = pansy::serialize(secrets);
-      this->_secrets = pansy::base64::encode(buf);
-    }
-
+    this->_secrets = pansy::base64::encode(pansy::serialize(secrets));
     {
       Key key;
       key.generate();
-
-      {
-        const auto buf = pansy::serialize(key);
-        this->_key = pansy::base64::encode(secrets.encrypt(password, buf));
-      }
+      this->_key = pansy::base64::encode(
+          secrets.encrypt(password, pansy::serialize(key)));
     }
   }
 

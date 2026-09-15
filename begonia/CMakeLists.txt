@@ -10,7 +10,6 @@ find_package(Boost CONFIG REQUIRED COMPONENTS iostreams)
 find_package(Boost CONFIG REQUIRED COMPONENTS log)
 find_package(Boost CONFIG REQUIRED COMPONENTS exception)
 
-find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 # -----------------------------------------------------------------------------
 execute_process(COMMAND git describe --tags --always --dirty
     OUTPUT_VARIABLE GIT_REV
@@ -30,5 +29,4 @@ target_link_libraries(begonia PUBLIC
 
 target_include_directories(begonia PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CPPCODEC_INCLUDE_DIRS}
 )
