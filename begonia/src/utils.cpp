@@ -5,8 +5,10 @@
 #include <fstream>
 #include <stdexcept>
 
-#include <boost/beast/core/detail/base64.hpp>
+// #include <boost/beast/core/detail/base64.hpp>
 #include <boost/log/trivial.hpp>
+
+#include <cppcodec/base64_url_unpadded.hpp>
 
 #if defined(_WIN32)
 
@@ -46,6 +48,13 @@ std::string pansy::hostname() {
 #endif
 
 std::string pansy::base64::encode(const std::vector<uint8_t>& buf) {
+  return cppcodec::base64_url_unpadded::encode(buf);
+}
+std::vector<uint8_t> pansy::base64::decode(const std::string& str) {
+  return cppcodec::base64_url_unpadded::decode(str);
+}
+/* FIXME boost base64 encode will change the buffer
+std::string pansy::base64::encode(const std::vector<uint8_t>& buf) {
   const size_t len = buf.size();
   std::string it;
 
@@ -67,6 +76,7 @@ std::vector<uint8_t> pansy::base64::decode(const std::string& str) {
 
   return buf;
 }
+*/
 
 std::string pansy::read_file_to_string(const std::filesystem::path& file) {
   std::ifstream it(file);
