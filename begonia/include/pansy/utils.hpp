@@ -16,6 +16,9 @@
 #include <boost/serialization/vector.hpp>
 
 namespace pansy {
+namespace random {
+std::vector<uint8_t> bytes(size_t len);
+}
 std::string hostname();
 std::string read_file_to_string(const std::filesystem::path& file);
 namespace base64 {

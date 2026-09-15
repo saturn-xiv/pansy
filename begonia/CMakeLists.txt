@@ -2,6 +2,7 @@ find_package(argparse CONFIG REQUIRED)
 find_package(tomlplusplus CONFIG REQUIRED)
 find_package(libssh2 CONFIG REQUIRED)
 find_package(unofficial-sodium CONFIG REQUIRED)
+find_package(OpenSSL CONFIG REQUIRED)
 find_package(Boost CONFIG REQUIRED COMPONENTS asio)
 find_package(Boost CONFIG REQUIRED COMPONENTS beast)
 find_package(Boost CONFIG REQUIRED COMPONENTS serialization)
@@ -21,10 +22,10 @@ configure_file(include/pansy/version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/pa
 # -----------------------------------------------------------------------------
 file(GLOB BEGONIA_SOURCE_LIST CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-add_library(begonia ${BEGONIA_SOURCE_LIST})
-target_link_libraries(begonia
+add_library(begonia STATIC ${BEGONIA_SOURCE_LIST})
+target_link_libraries(begonia PUBLIC
   Boost::asio Boost::beast Boost::serialization Boost::iostreams Boost::log Boost::exception
-  argparse::argparse tomlplusplus::tomlplusplus libssh2::libssh2 unofficial-sodium::sodium
+  argparse::argparse tomlplusplus::tomlplusplus libssh2::libssh2 unofficial-sodium::sodium OpenSSL::SSL OpenSSL::Crypto
 )
 
 target_include_directories(begonia PUBLIC

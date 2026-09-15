@@ -2,6 +2,7 @@
   "dependencies": [
     "libssh2",
     "libsodium",
+    "openssl",
     "argparse",
     "tomlplusplus",
     "boost-asio",

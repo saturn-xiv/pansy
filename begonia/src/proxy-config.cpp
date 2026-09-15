@@ -36,7 +36,7 @@ void pansy::proxy::Config::sample(const std::string& username,
 
     {
       Key key;
-      key.load(username);
+      key.generate();
 
       {
         const auto buf = pansy::serialize(key);

@@ -3,6 +3,10 @@
 
 #include <boost/log/trivial.hpp>
 
+#include <openssl/bio.h>
+#include <openssl/buffer.h>
+#include <openssl/evp.h>
+
 void pansy::proxy::Key::listen(const pansy::proxy::SshNode& node,
                                const std::string& host, uint16_t port) const {
   BOOST_LOG_TRIVIAL(debug) << "connect to " << node;
@@ -11,12 +15,29 @@ void pansy::proxy::Key::listen(const pansy::proxy::SshNode& node,
   // TODO
 }
 
-void pansy::proxy::Key::load(const std::string& username) {
-  BOOST_LOG_TRIVIAL(debug) << "load the ssh(ed25519) key files";
-  BOOST_LOG_TRIVIAL(debug)
-      << "you can generate them by: ssh-keygen -t ed25519 -f " << username
-      << " -C \"" << username << "@" << pansy::hostname() << '"';
+void pansy::proxy::Key::generate() {
+  EVP_PKEY_CTX* pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, NULL);
+  EVP_PKEY* pkey = NULL;
 
-  this->_public = pansy::read_file_to_string(username + ".pub");
-  this->_private = pansy::read_file_to_string(username);
+  if (!pctx || EVP_PKEY_keygen_init(pctx) <= 0 ||
+      EVP_PKEY_keygen(pctx, &pkey) <= 0) {
+    throw std::runtime_error("generating Ed25519 keypair failed");
+  }
+
+  {
+    size_t len = 0;
+    EVP_PKEY_get_raw_public_key(pkey, NULL, &len);
+    this->_public.resize(len);
+    EVP_PKEY_get_raw_public_key(pkey, this->_public.data(), &len);
+  }
+
+  {
+    size_t len = 0;
+    EVP_PKEY_get_raw_private_key(pkey, NULL, &len);
+    this->_private.resize(len);
+    EVP_PKEY_get_raw_private_key(pkey, this->_private.data(), &len);
+  }
+
+  EVP_PKEY_free(pkey);
+  EVP_PKEY_CTX_free(pctx);
 }

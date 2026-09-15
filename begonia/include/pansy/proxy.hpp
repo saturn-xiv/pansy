@@ -40,13 +40,13 @@ class Key {
 
   Key() {}
 
-  void load(const std::string& username);
+  void generate();
   void listen(const SshNode& node, const std::string& host,
               uint16_t port) const;
 
  private:
-  std::string _public;
-  std::string _private;
+  std::vector<uint8_t> _public;
+  std::vector<uint8_t> _private;
 };
 class Secrets {
  public:

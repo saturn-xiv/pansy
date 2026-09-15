@@ -61,3 +61,9 @@ std::vector<uint8_t> pansy::proxy::Secrets::decrypt(
   }
   return buf;
 }
+
+std::vector<uint8_t> pansy::random::bytes(size_t len) {
+  std::vector<uint8_t> buf(len);
+  randombytes_buf(buf.data(), buf.size());
+  return buf;
+}
