@@ -1,52 +1,45 @@
 #include "pansy/proxy.hpp"
 #include "pansy/utils.hpp"
 
+#include <cstdint>
 #include <fstream>
+#include <memory>
 #include <stdexcept>
 
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/stream.hpp>
 #include <boost/log/trivial.hpp>
 
 #include <toml++/toml.hpp>
 
+std::unique_ptr<pansy::proxy::Secrets> pansy::proxy::Config::secrets() const {
+  const auto buf = pansy::base64::decode(this->_secrets);
+  return pansy::deserialize<Secrets>(buf);
+}
+std::unique_ptr<pansy::proxy::Key> pansy::proxy::Config::key(
+    const std::string& password) const {
+  // BOOST_LOG_TRIVIAL(debug) << "using password: " << password;
+  const auto ciper = pansy::base64::decode(this->_key);
+  const auto secrets = this->secrets();
+  const auto buf = secrets->decrypt(password, ciper);
+  return pansy::deserialize<Key>(buf);
+}
+
 void pansy::proxy::Config::sample(const std::string& username,
                                   const std::string& password) {
+  // BOOST_LOG_TRIVIAL(debug) << "using password: " << password;
   {
     Secrets secrets;
     secrets.generate();
-
     {
-      std::vector<char> buf;
-      {
-        boost::iostreams::stream<
-            boost::iostreams::back_insert_device<std::vector<char>>>
-            os(boost::iostreams::back_inserter(buf));
-
-        boost::archive::binary_oarchive oa(os);
-        oa << secrets;
-      }
-      this->_secrets =
-          pansy::base64::encode(std::vector<uint8_t>(buf.begin(), buf.end()));
+      const auto buf = pansy::serialize(secrets);
+      this->_secrets = pansy::base64::encode(buf);
     }
 
     {
       Key key;
       key.load(username);
-
       {
-        std::vector<char> buf;
-        {
-          boost::iostreams::stream<
-              boost::iostreams::back_insert_device<std::vector<char>>>
-              os(boost::iostreams::back_inserter(buf));
-
-          boost::archive::binary_oarchive oa(os);
-          oa << key;
-        }
-
-        this->_key = pansy::base64::encode(secrets.encrypt(
-            password, std::vector<uint8_t>(buf.begin(), buf.end())));
+        const auto buf = pansy::serialize(key);
+        this->_key = pansy::base64::encode(secrets.encrypt(password, buf));
       }
     }
   }

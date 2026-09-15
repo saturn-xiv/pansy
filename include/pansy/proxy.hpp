@@ -1,18 +1,12 @@
 #pragma once
 
-#include <algorithm>
-#include <cstdint>
-#include <filesystem>
-#include <iterator>
-#include <memory>
-#include <optional>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include "pansy/application.hpp"
+#include "pansy/utils.hpp"
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/serialization/vector.hpp>
+#include <algorithm>
+#include <iterator>
+#include <optional>
+#include <unordered_map>
 
 namespace pansy {
 namespace proxy {
@@ -35,22 +29,6 @@ class SshNode {
   std::optional<uint16_t> _port;
   std::string _user;
 };
-class Config {
- public:
-  friend class Server;
-
-  Config() {}
-  Config(const std::filesystem::path& file);
-
-  void sample(const std::string& username, const std::string& password);
-  void save(const std::filesystem::path& file) const;
-
- private:
-  std::string _username;
-  std::string _key;
-  std::string _secrets;
-  std::unordered_map<std::string, SshNode> _nodes;
-};
 class Key {
  public:
   friend class boost::serialization::access;
@@ -59,11 +37,12 @@ class Key {
     ar & _public;
     ar & _private;
   }
-  friend class Secrets;
 
   Key() {}
 
   void load(const std::string& username);
+  void listen(const SshNode& node, const std::string& host,
+              uint16_t port) const;
 
  private:
   std::string _public;
@@ -91,15 +70,23 @@ class Secrets {
   std::vector<uint8_t> _salt;
   std::vector<uint8_t> _nonce;
 };
-
-class Server {
+class Config {
  public:
-  Server(const std::filesystem::path& config_file) : _config(config_file) {}
-  void start(const std::string& host, const std::string& ip, uint16_t port,
-             const std::string& password) const;
+  friend class pansy::Application;
+
+  Config() {}
+  Config(const std::filesystem::path& file);
+
+  void sample(const std::string& username, const std::string& password);
+  void save(const std::filesystem::path& file) const;
+  std::unique_ptr<Secrets> secrets() const;
+  std::unique_ptr<Key> key(const std::string& password) const;
 
  private:
-  Config _config;
+  std::string _username;
+  std::string _key;
+  std::string _secrets;
+  std::unordered_map<std::string, SshNode> _nodes;
 };
 }  // namespace proxy
 }  // namespace pansy

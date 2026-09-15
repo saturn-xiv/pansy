@@ -1,4 +1,3 @@
-#include "pansy/application.hpp"
 #include "pansy/proxy.hpp"
 #include "pansy/version.hpp"
 #include "pansy/windows.hpp"
@@ -12,6 +11,8 @@
 #include <openssl/opensslv.h>
 #include <sodium.h>
 #include <argparse/argparse.hpp>
+
+#define PANSY_PROXY_PASSWORD_MIN_LENGTH 6
 
 int pansy::Application::launch(int argc, char* argv[]) {
   const std::string version =
@@ -116,6 +117,9 @@ int pansy::Application::launch(int argc, char* argv[]) {
 void pansy::Application::create_new_user(const std::string& config_file,
                                          const std::string& username,
                                          const std::string& password) {
+  if (password.length() < PANSY_PROXY_PASSWORD_MIN_LENGTH) {
+    throw std::invalid_argument("password is too short");
+  }
   if (std::filesystem::exists(config_file)) {
     BOOST_LOG_TRIVIAL(error) << "file " << config_file << " already exists.";
     return;
@@ -133,6 +137,14 @@ void pansy::Application::start_proxy_server(const std::string& config_file,
                                             const std::string& local_ip,
                                             uint16_t local_port,
                                             const std::string& password) {
-  pansy::proxy::Server server(config_file);
-  server.start(remote_host, local_ip, local_port, password);
+  pansy::proxy::Config config(config_file);
+  BOOST_LOG_TRIVIAL(info) << "listen " << remote_host << " for "
+                          << config._username << " on http://" << local_ip << ":"
+                          << local_port;
+  if (!config._nodes.contains(remote_host)) {
+    throw std::invalid_argument("couldn't found host " + remote_host);
+  }
+
+  const auto key = config.key(password);
+  key->listen(config._nodes.at(remote_host), local_ip, local_port);
 }

@@ -1,4 +1,4 @@
-#include "pansy/application.hpp"
+#include "pansy/proxy.hpp"
 
 #if defined(_WIN32)
 

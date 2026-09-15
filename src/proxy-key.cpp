@@ -3,6 +3,14 @@
 
 #include <boost/log/trivial.hpp>
 
+void pansy::proxy::Key::listen(const pansy::proxy::SshNode& node,
+                               const std::string& host, uint16_t port) const {
+  BOOST_LOG_TRIVIAL(debug) << "connect to " << node;
+  // TODO
+  BOOST_LOG_TRIVIAL(debug) << "linsten on http://" << host << ":" << port;
+  // TODO
+}
+
 void pansy::proxy::Key::load(const std::string& username) {
   BOOST_LOG_TRIVIAL(debug) << "load the ssh(ed25519) key files";
   BOOST_LOG_TRIVIAL(debug)
