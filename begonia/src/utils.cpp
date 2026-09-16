@@ -1,6 +1,7 @@
 #include "pansy/utils.hpp"
 
 #include <limits.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <fstream>
 #include <stdexcept>
@@ -8,11 +9,22 @@
 #include <boost/beast/core/detail/base64.hpp>
 #include <boost/log/trivial.hpp>
 
-// #include <cppcodec/base64_url_unpadded.hpp>
-
 #if defined(_WIN32)
 
+#include <lmcons.h>
 #include <windows.h>
+
+std::string pansy::username() {
+  char it[UNLEN + 1];
+  DWORD len = UNLEN + 1;
+
+  GetUserNameA(it, &len);
+  if (len == 0) {
+    throw std::runtime_error("failed to get current username: " +
+                             GetLastError());
+  }
+  return std::string(it);
+}
 
 std::string pansy::hostname() {
   DWORD buf_size = 0;
@@ -36,7 +48,25 @@ std::string pansy::hostname() {
                       str.data(), size_needed, NULL, NULL);
   return str;
 }
+
 #else
+
+#include <pwd.h>
+
+std::string pansy::username() {
+  long env_size = sysconf(_SC_GETPW_R_SIZE_MAX);
+  size_t buf_size = (env_size == -1) ? 16384 : static_cast<size_t>(env_size);
+  std::vector<char> buffer(buf_size);
+
+  struct passwd pwd;
+  struct passwd* result = nullptr;
+
+  if (getpwuid_r(getuid(), &pwd, buffer.data(), buffer.size(), &result) == 0 &&
+      result) {
+    return std::string(pwd.pw_name);
+  }
+  throw std::runtime_error("failed to get current username: ");
+}
 std::string pansy::hostname() {
   char it[HOST_NAME_MAX + 1];
 

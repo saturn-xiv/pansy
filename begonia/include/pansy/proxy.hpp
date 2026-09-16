@@ -23,6 +23,8 @@ class SshNode {
   }
 
   inline uint16_t port() const { return this->_port.value_or(22); }
+  inline std::string host() const { return this->_host; }
+  inline std::string user() const { return this->_user; }
 
  private:
   std::string _host;
@@ -41,6 +43,8 @@ class Key {
   Key() {}
 
   void generate();
+  std::string pem() const;
+  std::string pub() const;
   void listen(const SshNode& node, const std::string& host,
               uint16_t port) const;
 
@@ -88,5 +92,6 @@ class Config {
   std::string _secrets;
   std::unordered_map<std::string, SshNode> _nodes;
 };
+
 }  // namespace proxy
 }  // namespace pansy
