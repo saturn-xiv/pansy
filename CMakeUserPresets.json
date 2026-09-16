@@ -57,8 +57,7 @@
         "CMAKE_BUILD_TYPE": "Release"
       },
       "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-mingw-static-release",
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/arm64-darwin.cmake"
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-release"
       }
     }
   ]
