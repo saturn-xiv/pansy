@@ -5,6 +5,7 @@
     "openssl",
     "argparse",
     "tomlplusplus",
+    "boost-algorithm",
     "boost-asio",
     "boost-beast",
     "boost-iostreams",

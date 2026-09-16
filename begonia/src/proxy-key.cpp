@@ -70,8 +70,9 @@ static std::string format_openssh_public_key(
 
   std::vector<uint8_t> buf;
 
-  // 1. Prefix length of algorithm name (7) as a 4-byte big-endian integer
-  buf.insert(buf.end(), {0, 0, 0, 7});
+  // 1. Prefix length of algorithm name (11) as a 4-byte big-endian integer
+  // 7-rsa 11-ed25519
+  buf.insert(buf.end(), {0, 0, 0, 11});
   // 2. Algorithm name: "ssh-ed25519"
   const std::string alg = "ssh-ed25519";
   buf.insert(buf.end(), alg.begin(), alg.end());
@@ -96,7 +97,7 @@ void pansy::proxy::Key::listen(const pansy::proxy::SshNode& node,
   pansy::ssh::SessionManager manager;
 
   const std::string pem_key = this->pem();
-  BOOST_LOG_TRIVIAL(debug) << pem_key;
+  // BOOST_LOG_TRIVIAL(debug) << pem_key;
   if (!manager.init(node.host(), node.port(), node.user(), pem_key)) {
     throw std::runtime_error("failed to connect the server");
   }

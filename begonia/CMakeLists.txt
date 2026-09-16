@@ -3,13 +3,13 @@ find_package(tomlplusplus CONFIG REQUIRED)
 find_package(libssh2 CONFIG REQUIRED)
 find_package(unofficial-sodium CONFIG REQUIRED)
 find_package(OpenSSL CONFIG REQUIRED)
+find_package(Boost CONFIG REQUIRED COMPONENTS algorithm)
 find_package(Boost CONFIG REQUIRED COMPONENTS asio)
 find_package(Boost CONFIG REQUIRED COMPONENTS beast)
 find_package(Boost CONFIG REQUIRED COMPONENTS serialization)
 find_package(Boost CONFIG REQUIRED COMPONENTS iostreams)
 find_package(Boost CONFIG REQUIRED COMPONENTS log)
 find_package(Boost CONFIG REQUIRED COMPONENTS exception)
-
 # -----------------------------------------------------------------------------
 execute_process(COMMAND git describe --tags --always --dirty
     OUTPUT_VARIABLE GIT_REV
@@ -23,7 +23,7 @@ file(GLOB BEGONIA_SOURCE_LIST CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src
 
 add_library(begonia STATIC ${BEGONIA_SOURCE_LIST})
 target_link_libraries(begonia PUBLIC
-  Boost::asio Boost::beast Boost::serialization Boost::iostreams Boost::log Boost::exception
+  Boost::algorithm Boost::asio Boost::beast Boost::serialization Boost::iostreams Boost::log Boost::exception
   argparse::argparse tomlplusplus::tomlplusplus libssh2::libssh2 unofficial-sodium::sodium OpenSSL::SSL OpenSSL::Crypto
 )
 

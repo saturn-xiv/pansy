@@ -15,8 +15,9 @@ std::vector<uint8_t> pansy::proxy::Secrets::key(
   std::copy_n(this->_salt.begin(),
               static_cast<size_t>(crypto_secretbox_KEYBYTES - len),
               std::back_inserter(buf));
-  BOOST_LOG_TRIVIAL(debug) << "using " << buf.size()
-                           << "-bytes aes key: " << pansy::base64::encode(buf);
+  // BOOST_LOG_TRIVIAL(debug) << "using " << buf.size()
+  //                          << "-bytes aes key: " <<
+  //                          pansy::base64::encode(buf);
   return buf;
 }
 
@@ -40,9 +41,6 @@ void pansy::proxy::Secrets::generate() {
 std::vector<uint8_t> pansy::proxy::Secrets::encrypt(
     const std::string& password, const std::vector<uint8_t>& plain) const {
   const auto key = this->key(password);
-  // BOOST_LOG_TRIVIAL(debug) << "actual encrypt key & nonce: "
-  //                          << pansy::base64::encode(key) << " "
-  //                          << pansy::base64::encode(this->_nonce);
   std::vector<uint8_t> buf(crypto_secretbox_MACBYTES + plain.size());
   crypto_secretbox_easy(buf.data(), plain.data(), plain.size(),
                         this->_nonce.data(), key.data());
@@ -54,9 +52,6 @@ std::vector<uint8_t> pansy::proxy::Secrets::decrypt(
     throw std::invalid_argument("invalid cipher length");
   }
   const auto key = this->key(password);
-  // BOOST_LOG_TRIVIAL(debug) << "actual decrypt key & nonce: "
-  //                          << pansy::base64::encode(key) << " "
-  //                          << pansy::base64::encode(this->_nonce);
   std::vector<uint8_t> buf(cipher.size() - crypto_secretbox_MACBYTES);
   if (crypto_secretbox_open_easy(buf.data(), cipher.data(), cipher.size(),
                                  this->_nonce.data(), key.data()) != 0) {
