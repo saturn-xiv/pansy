@@ -97,12 +97,12 @@ void pansy::proxy::Key::listen(const pansy::proxy::SshNode& node,
   pansy::ssh::SessionManager manager;
 
   const std::string pem_key = this->pem();
-  // BOOST_LOG_TRIVIAL(debug) << pem_key;
-  if (!manager.init(node.host(), node.port(), node.user(), pem_key)) {
-    throw std::runtime_error("failed to connect the server");
-  }
 
   boost::asio::io_context io_context;
+  // BOOST_LOG_TRIVIAL(debug) << pem_key;
+  if (!manager.init(node.ip(io_context), node.port(), node.user(), pem_key)) {
+    throw std::runtime_error("failed to connect the server");
+  }
   pansy::ssh::ProxyServer server(io_context, port, manager.session());
 
   const auto thread_count = std::thread::hardware_concurrency();

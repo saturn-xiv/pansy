@@ -8,6 +8,8 @@
 #include <optional>
 #include <unordered_map>
 
+#include <boost/asio.hpp>
+
 namespace pansy {
 namespace proxy {
 class SshNode {
@@ -22,6 +24,7 @@ class SshNode {
     return os;
   }
 
+  std::string ip(boost::asio::io_context& io_context) const;
   inline uint16_t port() const { return this->_port.value_or(22); }
   inline std::string host() const { return this->_host; }
   inline std::string user() const { return this->_user; }
