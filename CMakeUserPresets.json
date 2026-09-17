@@ -46,7 +46,8 @@
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-mingw-static-release",
-        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/x86_64-windows.cmake"
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "${sourceDir}/toolchains/x86_64-windows.cmake",
+        "CMAKE_EXE_LINKER_FLAGS": "$penv{EXTRA_LINK_FLAGS} --static"
       }
     },
     {
