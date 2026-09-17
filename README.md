@@ -17,6 +17,8 @@
   pansy create-new-user -n "Who am i" -p "change-me"
   # Run a proxy server on debug mode
   pandy -d start-proxy-server -c config.toml -p 8000 -H host -P "change-me"
+  # Then append the public key into your ~/.ssh/authorized_keys
+  HTTP_PROXY="http://127.0.0.1:8000" HTTPS_PROXY="http://127.0.0.1:8000" curl -v https://www.google.com
   ```
 
 ## Documents
