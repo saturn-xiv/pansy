@@ -1,13 +1,6 @@
 #include "pansy/proxy.hpp"
 #include "pansy/utils.hpp"
 
-#include <cstdint>
-#include <fstream>
-#include <memory>
-#include <stdexcept>
-
-#include <boost/log/trivial.hpp>
-
 #include <toml++/toml.hpp>
 
 std::unique_ptr<pansy::proxy::Secrets> pansy::proxy::Config::secrets() const {

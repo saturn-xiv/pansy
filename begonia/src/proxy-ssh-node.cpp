@@ -1,19 +1,11 @@
 #include "pansy/proxy.hpp"
 
-#include <arpa/inet.h>
-
 std::string pansy::proxy::SshNode::ip(
     boost::asio::io_context& io_context) const {
   {
-    struct in_addr ip4;
-    if (inet_pton(AF_INET, this->_host.c_str(), &ip4) == 1) {
-      return this->_host;
-    }
-  }
-
-  {
-    struct in6_addr ip6;
-    if (inet_pton(AF_INET6, this->_host.c_str(), &ip6) == 1) {
+    boost::system::error_code ec;
+    boost::asio::ip::make_address(this->_host, ec);
+    if (!ec) {
       return this->_host;
     }
   }

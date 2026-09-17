@@ -1,7 +1,6 @@
 #pragma once
 
-#include <cstdint>
-#include <string>
+#include "pansy/env.hpp"
 
 namespace pansy {
 class Application {

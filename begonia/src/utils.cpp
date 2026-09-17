@@ -1,18 +1,6 @@
 #include "pansy/utils.hpp"
 
-#include <limits.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <fstream>
-#include <stdexcept>
-
-#include <boost/beast/core/detail/base64.hpp>
-#include <boost/log/trivial.hpp>
-
 #if defined(_WIN32)
-
-#include <lmcons.h>
-#include <windows.h>
 
 std::string pansy::username() {
   char it[UNLEN + 1];

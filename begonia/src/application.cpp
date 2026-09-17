@@ -2,11 +2,6 @@
 #include "pansy/version.hpp"
 #include "pansy/windows.hpp"
 
-#include <cstdlib>
-
-#include <boost/log/expressions.hpp>
-#include <boost/log/trivial.hpp>
-
 #include <libssh2.h>
 #include <openssl/opensslv.h>
 #include <sodium.h>

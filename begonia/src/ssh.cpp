@@ -1,12 +1,5 @@
 #include "pansy/ssh.hpp"
 
-#include <sstream>
-#include <stdexcept>
-#include <thread>
-#include <vector>
-
-#include <boost/log/trivial.hpp>
-
 bool pansy::ssh::SessionManager::init(const std::string& host, int port,
                                       const std::string& user,
                                       const std::string& private_key) {

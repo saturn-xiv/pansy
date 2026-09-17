@@ -1,7 +1,5 @@
 #include "pansy/proxy.hpp"
 
-#include <unistd.h>
-
 #if defined(__linux__)
 
 bool pansy::Application::is_running_on_console() {

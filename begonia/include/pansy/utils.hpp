@@ -1,19 +1,6 @@
 #pragma once
 
-#include <cstdint>
-#include <filesystem>
-#include <memory>
-#include <string>
-#include <vector>
-
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/filter/bzip2.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/serialization/vector.hpp>
+#include "pansy/env.hpp"
 
 namespace pansy {
 namespace random {

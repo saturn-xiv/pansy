@@ -1,9 +1,5 @@
 #include "pansy/proxy.hpp"
 
-#include <stdexcept>
-
-#include <boost/log/trivial.hpp>
-
 #include <sodium.h>
 
 std::vector<uint8_t> pansy::proxy::Secrets::key(

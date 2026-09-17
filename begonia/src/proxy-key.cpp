@@ -2,10 +2,6 @@
 #include "pansy/ssh.hpp"
 #include "pansy/utils.hpp"
 
-#include <stdexcept>
-
-#include <boost/log/trivial.hpp>
-
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>

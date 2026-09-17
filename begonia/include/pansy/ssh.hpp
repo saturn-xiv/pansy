@@ -1,11 +1,6 @@
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <string>
-
-#include <boost/asio.hpp>
-#include <vector>
+#include "pansy/env.hpp"
 
 #include <libssh2.h>
 
