@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pansy/application.hpp"
 #include "pansy/utils.hpp"
 
 namespace pansy {
@@ -41,8 +40,6 @@ class Key {
   void generate();
   std::string pem() const;
   std::string pub() const;
-  void listen(const SshNode& node, const std::string& host,
-              uint16_t port) const;
 
  private:
   std::vector<uint8_t> _public;
@@ -70,9 +67,10 @@ class Secrets {
   std::vector<uint8_t> _salt;
   std::vector<uint8_t> _nonce;
 };
+class Server;
 class Config {
  public:
-  friend class pansy::Application;
+  friend class pansy::proxy::Server;
 
   Config() {}
   Config(const std::filesystem::path& file);
@@ -89,5 +87,14 @@ class Config {
   std::unordered_map<std::string, SshNode> _nodes;
 };
 
+class Server {
+ public:
+  Server(const std::filesystem::path& config_file) : _config(config_file) {}
+  void startup(const std::string& remote_host, const std::string& local_ip,
+               uint16_t local_port, const std::string& password) const;
+
+ private:
+  pansy::proxy::Config _config;
+};
 }  // namespace proxy
 }  // namespace pansy

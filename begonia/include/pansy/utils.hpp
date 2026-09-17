@@ -8,6 +8,7 @@ std::vector<uint8_t> bytes(size_t len);
 }
 std::string username();
 std::string hostname();
+bool is_running_on_console();
 std::string read_file_to_string(const std::filesystem::path& file);
 namespace base64 {
 std::string encode(const std::vector<uint8_t>& buf);

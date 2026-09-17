@@ -49,6 +49,8 @@ class ProxyServer {
     do_accept();
   }
 
+  void shutdown();
+
  private:
   void do_accept();
 

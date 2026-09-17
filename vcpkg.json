@@ -12,6 +12,7 @@
     "boost-serialization",
     "boost-log",
     "boost-exception",
-    "boost-test"
+    "boost-test",
+    "ftxui"
   ]
 }

@@ -83,40 +83,6 @@ static std::string format_openssh_public_key(
   return it;
 }
 
-void pansy::proxy::Key::listen(const pansy::proxy::SshNode& node,
-                               const std::string& host, uint16_t port) const {
-  BOOST_LOG_TRIVIAL(debug)
-      << "please append this line into your ~/.ssh/authorized_keys: "
-      << this->pub();
-  BOOST_LOG_TRIVIAL(debug) << "connect to " << node;
-
-  pansy::ssh::SessionManager manager;
-
-  const std::string pem_key = this->pem();
-
-  boost::asio::io_context io_context;
-  // BOOST_LOG_TRIVIAL(debug) << pem_key;
-  if (!manager.init(node.ip(io_context), node.port(), node.user(), pem_key)) {
-    throw std::runtime_error("failed to connect the server");
-  }
-  pansy::ssh::ProxyServer server(io_context, port, manager.session());
-
-  const auto thread_count = std::thread::hardware_concurrency();
-  std::vector<std::thread> threads;
-  BOOST_LOG_TRIVIAL(debug) << "linstening on http://" << host << ":" << port
-                           << " with " << thread_count << " threads";
-
-  for (auto i = 0; i < thread_count; ++i) {
-    threads.emplace_back([&io_context]() { io_context.run(); });
-  }
-
-  for (auto& t : threads) {
-    if (t.joinable()) {
-      t.join();
-    }
-  }
-}
-
 std::string pansy::proxy::Key::pem() const {
   return build_openssh_pem_private_key(this->_private);
 }

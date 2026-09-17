@@ -10,6 +10,7 @@ find_package(Boost CONFIG REQUIRED COMPONENTS serialization)
 find_package(Boost CONFIG REQUIRED COMPONENTS iostreams)
 find_package(Boost CONFIG REQUIRED COMPONENTS log)
 find_package(Boost CONFIG REQUIRED COMPONENTS exception)
+find_package(ftxui CONFIG REQUIRED)
 # -----------------------------------------------------------------------------
 execute_process(COMMAND git describe --tags --always --dirty
     OUTPUT_VARIABLE GIT_REV
@@ -25,6 +26,7 @@ add_library(begonia STATIC ${BEGONIA_SOURCE_LIST})
 target_link_libraries(begonia PUBLIC
   Boost::algorithm Boost::asio Boost::beast Boost::serialization Boost::iostreams Boost::log Boost::exception
   argparse::argparse tomlplusplus::tomlplusplus libssh2::libssh2 unofficial-sodium::sodium OpenSSL::SSL OpenSSL::Crypto
+  ftxui::dom ftxui::ftxui ftxui::screen ftxui::component
 )
 
 target_include_directories(begonia PUBLIC

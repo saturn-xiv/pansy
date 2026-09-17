@@ -211,3 +211,12 @@ void pansy::ssh::ProxyServer::do_accept() {
     do_accept();
   });
 }
+
+void pansy::ssh::ProxyServer::shutdown() {
+  boost::system::error_code ec;
+  this->_acceptor.close(ec);
+
+  if (ec) {
+    BOOST_LOG_TRIVIAL(error) << ec.message();
+  }
+}
