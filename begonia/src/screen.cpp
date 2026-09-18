@@ -51,9 +51,9 @@ void pansy::Screen::render() const {
          _window("Password", password_box)});
 
     auto status_box = ftxui::Renderer([&] {
-      const std::string message =
-          std::format("listen {} on http://0.0.0.0:{}",
-                      line_options[line_selected], (PORT + port_selected));
+      const std::string message = std::format(
+          "listen {} on http://0.0.0.0:{}", line_options[line_selected],
+          (static_cast<int>(PORT) + port_selected));
 
       return ftxui::window(ftxui::text("Status"),
                            ftxui::vbox({ftxui::text(message)})) |
@@ -67,5 +67,5 @@ void pansy::Screen::render() const {
   }
 
   this->_server.startup(line_options[line_selected], "0.0.0.0",
-                        PORT + port_selected, password);
+                        PORT + static_cast<uint16_t>(port_selected), password);
 }

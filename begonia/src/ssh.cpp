@@ -73,6 +73,7 @@ void pansy::ssh::ProxySession::forward_client_to_ssh() {
       }
       written += ret;
     }
+    BOOST_LOG_TRIVIAL(debug) << "send to server " << written << " bytes";
   }
   libssh2_channel_send_eof(this->_channel);
 }
@@ -85,6 +86,7 @@ void pansy::ssh::ProxySession::forward_ssh_to_client() {
     if (len <= 0) {
       break;
     }
+    BOOST_LOG_TRIVIAL(debug) << "write back to client " << len << " bytes";
 
     boost::asio::write(this->_client_socket, boost::asio::buffer(buf, len), ec);
     if (ec) {
@@ -162,6 +164,7 @@ bool pansy::ssh::ProxySession::parse_http_target(const std::string& request,
   if (!(stream >> method >> url >> protocol)) {
     return false;
   }
+  BOOST_LOG_TRIVIAL(debug) << protocol << " " << method << " " << url;
 
   if (method == "CONNECT") {
     is_connect = true;
