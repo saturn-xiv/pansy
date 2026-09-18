@@ -92,6 +92,9 @@ class Server {
   Server(const std::filesystem::path& config_file) : _config(config_file) {}
   void startup(const std::string& remote_host, const std::string& local_ip,
                uint16_t local_port, const std::string& password) const;
+  std::unordered_map<std::string, SshNode> nodes() const {
+    return this->_config._nodes;
+  }
 
  private:
   pansy::proxy::Config _config;

@@ -5,10 +5,10 @@
 namespace pansy {
 class Screen {
  public:
-  Screen(const pansy::proxy::Config& config) : _config(config) {}
+  Screen(const std::filesystem::path& config_file) : _server(config_file) {}
   void render() const;
 
  private:
-  pansy::proxy::Config _config;
+  pansy::proxy::Server _server;
 };
 }  // namespace pansy

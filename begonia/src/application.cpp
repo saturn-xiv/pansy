@@ -106,7 +106,8 @@ int pansy::Application::launch(int argc, char* argv[]) const {
   //   return EXIT_FAILURE;
   // }
 
-  this->start_screen(config_file);
+  pansy::Screen screen(config_file);
+  screen.render();
   return EXIT_SUCCESS;
 }
 
@@ -126,10 +127,4 @@ void pansy::Application::create_new_user(const std::string& config_file,
   config.sample(username, password);
   config.save(config_file);
   BOOST_LOG_TRIVIAL(info) << "done.";
-}
-
-void pansy::Application::start_screen(const std::string& config_file) const {
-  pansy::proxy::Config config(config_file);
-  pansy::Screen screen(config);
-  screen.render();
 }

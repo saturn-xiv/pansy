@@ -12,6 +12,5 @@ class Application {
   void create_new_user(const std::string& config_file,
                        const std::string& username,
                        const std::string& password) const;
-  void start_screen(const std::string& config_file) const;
 };
 }  // namespace pansy
