@@ -34,7 +34,7 @@ int pansy::Application::launch(int argc, char* argv[]) const {
   argparse::ArgumentParser proxy_server_command("start-proxy-server");
   {
     proxy_server_command.add_argument("-i", "--ip")
-        .default_value("0.0.0.0")
+        .default_value("127.0.0.1")
         .help("local ip address to listen")
         .required();
     proxy_server_command.add_argument("-p", "--port")
