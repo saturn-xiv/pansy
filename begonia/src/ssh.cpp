@@ -60,7 +60,13 @@ void pansy::ssh::ProxySession::forward_client_to_ssh() {
   boost::system::error_code ec;
   while (true) {
     size_t len = this->_client_socket.read_some(boost::asio::buffer(buf), ec);
-    if (ec || len == 0) {
+    if (ec) {
+      BOOST_LOG_TRIVIAL(error)
+          << "failed to read: " << ec.value() << " " << ec.message();
+      break;
+    }
+    if (len == 0) {
+      BOOST_LOG_TRIVIAL(debug) << "nothing need send to ssh";
       break;
     }
 
@@ -69,12 +75,15 @@ void pansy::ssh::ProxySession::forward_client_to_ssh() {
       ssize_t ret =
           libssh2_channel_write(this->_channel, buf + written, len - written);
       if (ret < 0) {
+        BOOST_LOG_TRIVIAL(error) << "got " << ret;
         return;
       }
       written += ret;
     }
     BOOST_LOG_TRIVIAL(debug) << "send to server " << written << " bytes";
   }
+
+  BOOST_LOG_TRIVIAL(debug) << "send eof to channel";
   libssh2_channel_send_eof(this->_channel);
 }
 
@@ -84,12 +93,16 @@ void pansy::ssh::ProxySession::forward_ssh_to_client() {
   while (true) {
     ssize_t len = libssh2_channel_read(this->_channel, buf, sizeof(buf));
     if (len <= 0) {
+      BOOST_LOG_TRIVIAL(debug)
+          << "nothing need send to client (" << len << " bytes)";
       break;
     }
     BOOST_LOG_TRIVIAL(debug) << "write back to client " << len << " bytes";
 
     boost::asio::write(this->_client_socket, boost::asio::buffer(buf, len), ec);
     if (ec) {
+      BOOST_LOG_TRIVIAL(error)
+          << "failed to write: " << ec.value() << " " << ec.message();
       break;
     }
   }
@@ -105,7 +118,13 @@ void pansy::ssh::ProxySession::handle_proxy() {
         boost::asio::buffer(buffer), boost::asio::ip::tcp::socket::message_peek,
         ec);
 
-    if (ec || bytes_transferred == 0) {
+    if (ec) {
+      BOOST_LOG_TRIVIAL(error)
+          << "failed to receive: " << ec.value() << " " << ec.message();
+      return;
+    }
+    if (bytes_transferred == 0) {
+      BOOST_LOG_TRIVIAL(debug) << "nothing need to transferred";
       return;
     }
 
@@ -115,6 +134,7 @@ void pansy::ssh::ProxySession::handle_proxy() {
     bool is_connect = false;
 
     if (!parse_http_target(req_str, target_host, target_port, is_connect)) {
+      BOOST_LOG_TRIVIAL(error) << "failed to parse http target";
       return;
     }
 
@@ -162,6 +182,7 @@ bool pansy::ssh::ProxySession::parse_http_target(const std::string& request,
   std::istringstream stream(request);
   std::string method, url, protocol;
   if (!(stream >> method >> url >> protocol)) {
+    BOOST_LOG_TRIVIAL(error) << "failed to parse http method/url/protocol";
     return false;
   }
   BOOST_LOG_TRIVIAL(debug) << protocol << " " << method << " " << url;
